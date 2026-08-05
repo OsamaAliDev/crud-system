@@ -5,84 +5,103 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crud system</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/all.min.css" />
   <link rel="stylesheet" href="css/bootstrap.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 
 <body>
-  <section>
-    <div class="container bg-info my-5 p-5 rounded-5">
-      <h1 class="text-center text-white">Crud system</h1>
-      <div id="nameContainer" class="my-3">
-        <label for="nameInput">product name</label>
-        <input oninput="validateName()" type="text" id="nameInput" placeholder="product name" class="form-control" />
-        <div id="nameAlert" class="alert alert-danger mt-2 d-none" role="alert">
-          اول حرف كبير و من 3 الي 8
+  <div class="page-shell">
+    <section class="ultimate-card">
+      <div class="glass-layer">
+        <div class="hero-section">
+          <span class="eyebrow">Smart CRUD Dashboard</span>
+          <h1>Product Control Center</h1>
+          <p>Organize your items with instant validation, image previews, and a sleek futuristic layout.</p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <div id="nameContainer" class="my-3">
+              <label for="nameInput">Product name</label>
+              <input oninput="validateName()" type="text" id="nameInput" placeholder="Product name" class="form-control" />
+              <div id="nameAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                First letter must be uppercase and length should be 3 to 8 characters.
+              </div>
+            </div>
+
+            <div id="priceContainer" class="my-3">
+              <label for="priceInput">Product price</label>
+              <input oninput="validatePrice()" type="number" id="priceInput" placeholder="Product price" class="form-control" />
+              <div id="priceAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                Price must be a number greater than zero.
+              </div>
+            </div>
+
+            <div id="typeContainer" class="my-3">
+              <label for="typeInput">Product type</label>
+              <input oninput="validateType()" type="text" id="typeInput" placeholder="Product type" class="form-control" />
+              <div id="typeAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                Product type is required and must be at least 2 characters.
+              </div>
+            </div>
+
+            <div id="imageContainer" class="my-3">
+              <label for="imageInput">Product image</label>
+              <input type="file" id="imageInput" class="form-control" accept="image/*" />
+              <img id="previewImg" src="" class="d-none mt-2 rounded" alt="preview" />
+            </div>
+
+            <div id="descContainer" class="my-3">
+              <label for="descInput">Product description</label>
+              <textarea oninput="validateDesc()" id="descInput" placeholder="Product description" class="form-control"></textarea>
+              <div id="descAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                Description is required and must be at least 5 characters.
+              </div>
+            </div>
+
+            <div id="buttonsContainer" class="d-grid gap-2">
+              <button onclick="addProduct()" id="addBtn" class="btn btn-primary rounded-pill">
+                Add product
+              </button>
+              <button onclick="updateProduct()" id="updateBtn" class="btn btn-success rounded-pill d-none">
+                Update product
+              </button>
+              <button onclick="cancelEdit()" id="cancelBtn" class="btn btn-outline-light rounded-pill d-none">
+                Cancel edit
+              </button>
+            </div>
+          </div>
+
+          <div class="col-lg-8">
+            <div class="search-panel">
+              <input oninput="searchProduct()" type="text" id="searchInput" placeholder="Search product" class="form-control" />
+            </div>
+
+            <div class="table-responsive mt-3">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="priceContainer" class="my-3">
-        <label for="priceInput">product price</label>
-        <input oninput="validatePrice()" type="number" id="priceInput" placeholder="product price"
-          class="form-control" />
-        <div id="priceAlert" class="alert alert-danger mt-2 d-none" role="alert">
-          السعر لازم يكون رقم أكبر من صفر
-        </div>
-      </div>
-      <div id="typeContainer" class="my-3">
-        <label for="typeInput">product type</label>
-        <input oninput="validateType()" type="text" id="typeInput" placeholder="product type" class="form-control" />
-        <div id="typeAlert" class="alert alert-danger mt-2 d-none" role="alert">
-          نوع المنتج مطلوب ولازم يكون حرفين على الأقل
-        </div>
-      </div>
-      <!-- مكان الصوره الجديد ⬇️⬇️⬇️⬇️⬇️ -->
-      <div id="imageContainer" class="my-3">
-        <label for="imageInput">product image</label>
-        <input type="file" id="imageInput" class="form-control" accept="image/*" />
-        <img id="previewImg" src="" class="d-none mt-2 rounded" style="width: 80px; height: 80px; object-fit: cover;">
-      </div>
-      <div id="descContainer" class="my-3">
-        <label for="descInput">product desc</label>
-        <textarea oninput="validateDesc()" id="descInput" placeholder="product desc" class="form-control"></textarea>
-        <div id="descAlert" class="alert alert-danger mt-2 d-none" role="alert">
-          الوصف مطلوب ولازم يكون 5 حروف على الأقل
-        </div>
-      </div>
-
-      <div id="buttonsContainer" class="text-center">
-        <button onclick="addProduct()" id="addBtn" class="btn btn-dark w-50 rounded-pill mb-1">
-          add product
-        </button>
-        <!-- اضافه للضغط علي الصور ⬇️⬇️⬇️ -->
-        <button onclick="updateProduct()" id="updateBtn" class="btn btn-dark w-50 rounded-pill d-none">
-          update product
-        </button>
-        <input oninput="searchProduct()" type="text" id="searchInput" placeholder="search product"
-          class="form-control mx-auto my-3 w-50" />
-      </div>
-
-      <table class="table table-striped-columns">
-        <thead>
-          <!-- اضافه عمود للصور ⬇️⬇️⬇️ -->
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Image</th>
-            <th scope="col">Name</th>
-            <th scope="col">price</th>
-            <th scope="col">type</th>
-            <th scope="col">desc</th>
-            <th scope="col">actions</th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-
-
-        </tbody>
-      </table>
-    </div>
-  </section>
-
+    </section>
+  </div>
 
   <script src="js/bootstrap.bundle.min.js"></script>
   <script src="js/main.js"></script>

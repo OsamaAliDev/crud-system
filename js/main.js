@@ -4,20 +4,24 @@ var typeInput = document.getElementById("typeInput");
 var descInput = document.getElementById("descInput");
 var addBtn = document.getElementById("addBtn");
 var updateBtn = document.getElementById("updateBtn");
+var cancelBtn = document.getElementById("cancelBtn");
 var tbody = document.getElementById("tbody");
 var searchInput = document.getElementById("searchInput");
-// ⬇️⬇️⬇️
 var imageInput = document.getElementById("imageInput");
 var previewImg = document.getElementById("previewImg");
 var nameAlert = document.getElementById("nameAlert");
 var priceAlert = document.getElementById("priceAlert");
 var typeAlert = document.getElementById("typeAlert");
 var descAlert = document.getElementById("descAlert");
-var crntIndex = -1; //لاضافه ترتيب للمنتجات علشان اعدلها
 
+var editingIndex = -1;
 var productList = JSON.parse(localStorage.getItem("products")) || [];
+
 displayProducts();
 
+imageInput.addEventListener("change", function () {
+    previewSelectedImage(this);
+});
 
 function addProduct() {
     if (validateName() && validatePrice() && validateType() && validateDesc()) {
@@ -26,7 +30,7 @@ function addProduct() {
         if (file) {
             var reader = new FileReader();
             reader.onload = function (e) {
-                saveNewProduct(e.target.result); // e.target.result = الصورة كـ base64
+                saveNewProduct(e.target.result);
             };
             reader.readAsDataURL(file);
         } else {
@@ -37,17 +41,17 @@ function addProduct() {
 
 function saveNewProduct(imageData) {
     var product = {
-        name: nameInput.value,
+        name: nameInput.value.trim(),
         price: priceInput.value,
-        type: typeInput.value,
-        desc: descInput.value,
+        type: typeInput.value.trim(),
+        desc: descInput.value.trim(),
         image: imageData
     };
+
     productList.push(product);
-    localStorage.setItem("products", JSON.stringify(productList));
+    saveProducts();
     displayProducts();
     clearForm();
-    console.log(productList);
 }
 
 function clearForm() {
@@ -56,107 +60,179 @@ function clearForm() {
     typeInput.value = "";
     descInput.value = "";
     imageInput.value = "";
+    previewImg.src = "";
+    previewImg.classList.add("d-none");
+    editingIndex = -1;
 
     [nameInput, priceInput, typeInput, descInput].forEach(function (input) {
         input.classList.remove("is-valid", "is-invalid");
     });
+
+    hideAlerts();
+    showActionButtons("add");
+}
+
+function hideAlerts() {
+    [nameAlert, priceAlert, typeAlert, descAlert].forEach(function (alert) {
+        alert.classList.add("d-none");
+    });
 }
 
 function displayProducts() {
+    renderProducts(searchInput.value);
+}
+
+function renderProducts(filterText) {
+    var text = (filterText || "").toLowerCase().trim();
     var box = "";
+    var matchedProducts = [];
+
     for (var i = 0; i < productList.length; i++) {
-        box += `  <tr>
-              <th scope="row">${i + 1}</th>
-              <td><img src="${productList[i].image}"  style="width: 60px; height: 60px; object-fit: cover;" class="rounded"></td>
-              <td>${productList[i].name}</td>
-              <td>${productList[i].price}</td>
-              <td>${productList[i].type}</td>
-              <td>${productList[i].desc}</td>
-              <td>
-                <button id="editBtn" class="btn btn-warning" onclick="getData(${i})">edit</button>
-                <button id="deleteBtn" class="btn btn-danger" onclick="deleteProduct(${i})">delete</button>
-              </td>
+        var product = productList[i];
+        var fullText = `${product.name} ${product.type} ${product.desc}`.toLowerCase();
+
+        if (fullText.includes(text)) {
+            matchedProducts.push({ index: i, product: product });
+        }
+    }
+
+    if (matchedProducts.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-4">No products found for this search.</td>
+            </tr>`;
+        return;
+    }
+
+    for (var j = 0; j < matchedProducts.length; j++) {
+        var data = matchedProducts[j];
+        var isEditing = data.index === editingIndex;
+
+        box += `
+            <tr class="${isEditing ? "table-active" : ""}">
+                <th scope="row">${data.index + 1}</th>
+                <td><img src="${data.product.image || ""}" alt="product" /></td>
+                <td>${data.product.name}</td>
+                <td>${data.product.price}</td>
+                <td>${data.product.type}</td>
+                <td>${data.product.desc}</td>
+                <td>
+                    <button class="btn btn-warning me-2" onclick="getData(${data.index})">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteProduct(${data.index})">Delete</button>
+                </td>
             </tr>`;
     }
+
     tbody.innerHTML = box;
 }
 
 function deleteProduct(index) {
+    if (index < 0 || index >= productList.length) {
+        return;
+    }
+
     productList.splice(index, 1);
-    localStorage.setItem("products", JSON.stringify(productList));
-    console.log(productList);
+    saveProducts();
+
+    if (editingIndex === index) {
+        clearForm();
+    } else if (editingIndex > index) {
+        editingIndex -= 1;
+    }
+
     displayProducts();
 }
 
 function searchProduct() {
-    var text = searchInput.value.toLowerCase();
-    var box = "";
-    for (var i = 0; i < productList.length; i++) {
-        if (productList[i].name.toLowerCase().includes(text)) {
-            box += `  <tr>
-              <th scope="row">${i + 1}</th>
-           
-              <td><img src="${productList[i].image}" alt="product" style="width: 60px; height: 60px; object-fit: cover;" class="rounded"></td>
-              <td>${productList[i].name}</td>
-              <td>${productList[i].price}</td>
-              <td>${productList[i].type}</td>
-              <td>${productList[i].desc}</td>
-              <td>
-                <button id="editBtn" class="btn btn-warning"onclick="getData(${i})">edit</button>
-                <button id="deleteBtn" class="btn btn-danger" onclick="deleteProduct(${i})">delete</button>
-              </td>
-            </tr>`;
-        }
-    }
-    tbody.innerHTML = box;
+    renderProducts(searchInput.value);
 }
+
 function getData(index) {
-    crntIndex = index;
-    nameInput.value = productList[index].name
-    priceInput.value = productList[index].price
-    typeInput.value = productList[index].type
-    descInput.value = productList[index].desc
-    //////////////////////////////////////////
-    previewImg.src = productList[index].image;
-    previewImg.classList.remove('d-none');
-    addBtn.classList.add('d-none')
-    updateBtn.classList.remove('d-none')
+    if (!productList[index]) {
+        return;
+    }
+
+    editingIndex = index;
+    nameInput.value = productList[index].name;
+    priceInput.value = productList[index].price;
+    typeInput.value = productList[index].type;
+    descInput.value = productList[index].desc;
+
+    if (productList[index].image) {
+        previewImg.src = productList[index].image;
+        previewImg.classList.remove("d-none");
+    } else {
+        previewImg.src = "";
+        previewImg.classList.add("d-none");
+    }
+
+    showActionButtons("update");
+    renderProducts(searchInput.value);
 }
-////////////
+
 function updateProduct() {
+    if (editingIndex === -1) {
+        return;
+    }
+
+    if (!validateName() || !validatePrice() || !validateType() || !validateDesc()) {
+        return;
+    }
+
     var file = imageInput.files[0];
 
     if (file) {
-        
         var reader = new FileReader();
         reader.onload = function (e) {
             applyUpdate(e.target.result);
         };
         reader.readAsDataURL(file);
     } else {
-
-        applyUpdate(productList[crntIndex].image);
+        applyUpdate(productList[editingIndex].image);
     }
 }
 
 function applyUpdate(imageData) {
-    productList[crntIndex].name = nameInput.value;
-    productList[crntIndex].price = priceInput.value;
-    productList[crntIndex].type = typeInput.value;
-    productList[crntIndex].desc = descInput.value;
-    productList[crntIndex].image = imageData;
+    productList[editingIndex].name = nameInput.value.trim();
+    productList[editingIndex].price = priceInput.value;
+    productList[editingIndex].type = typeInput.value.trim();
+    productList[editingIndex].desc = descInput.value.trim();
+    productList[editingIndex].image = imageData;
 
-    localStorage.setItem("products", JSON.stringify(productList));
+    saveProducts();
     displayProducts();
     clearForm();
-    previewImg.classList.add('d-none');
-
-    addBtn.classList.remove('d-none');
-    updateBtn.classList.add('d-none');
 }
+
+function saveProducts() {
+    localStorage.setItem("products", JSON.stringify(productList));
+}
+
+function showActionButtons(mode) {
+    addBtn.classList.toggle("d-none", mode !== "add");
+    updateBtn.classList.toggle("d-none", mode !== "update");
+    cancelBtn.classList.toggle("d-none", mode !== "update");
+}
+
+function cancelEdit() {
+    clearForm();
+    renderProducts(searchInput.value);
+}
+
+function previewSelectedImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            previewImg.src = e.target.result;
+            previewImg.classList.remove("d-none");
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 function validateName() {
     var regex = /^[A-Z][a-z]{3,8}$/;
-    var text = nameInput.value;
+    var text = nameInput.value.trim();
     if (regex.test(text)) {
         nameAlert.classList.add("d-none");
         nameInput.classList.add("is-valid");
@@ -169,6 +245,7 @@ function validateName() {
         return false;
     }
 }
+
 function validatePrice() {
     var value = parseFloat(priceInput.value);
     if (!isNaN(value) && value > 0) {
