@@ -1,6 +1,9 @@
 var nameInput = document.getElementById("nameInput");
 var priceInput = document.getElementById("priceInput");
 var typeInput = document.getElementById("typeInput");
+var categoryInput = document.getElementById("categoryInput");
+var stockInput = document.getElementById("stockInput");
+var skuInput = document.getElementById("skuInput");
 var descInput = document.getElementById("descInput");
 var addBtn = document.getElementById("addBtn");
 var updateBtn = document.getElementById("updateBtn");
@@ -12,6 +15,9 @@ var previewImg = document.getElementById("previewImg");
 var nameAlert = document.getElementById("nameAlert");
 var priceAlert = document.getElementById("priceAlert");
 var typeAlert = document.getElementById("typeAlert");
+var categoryAlert = document.getElementById("categoryAlert");
+var stockAlert = document.getElementById("stockAlert");
+var skuAlert = document.getElementById("skuAlert");
 var descAlert = document.getElementById("descAlert");
 
 var editingIndex = -1;
@@ -24,7 +30,7 @@ imageInput.addEventListener("change", function () {
 });
 
 function addProduct() {
-    if (validateName() && validatePrice() && validateType() && validateDesc()) {
+    if (validateName() && validatePrice() && validateType() && validateCategory() && validateStock() && validateSKU() && validateDesc()) {
         var file = imageInput.files[0];
 
         if (file) {
@@ -44,6 +50,9 @@ function saveNewProduct(imageData) {
         name: nameInput.value.trim(),
         price: priceInput.value,
         type: typeInput.value.trim(),
+        category: categoryInput.value.trim(),
+        stock: stockInput.value,
+        sku: skuInput.value.trim(),
         desc: descInput.value.trim(),
         image: imageData
     };
@@ -58,13 +67,16 @@ function clearForm() {
     nameInput.value = "";
     priceInput.value = "";
     typeInput.value = "";
+    categoryInput.value = "";
+    stockInput.value = "";
+    skuInput.value = "";
     descInput.value = "";
     imageInput.value = "";
     previewImg.src = "";
     previewImg.classList.add("d-none");
     editingIndex = -1;
 
-    [nameInput, priceInput, typeInput, descInput].forEach(function (input) {
+    [nameInput, priceInput, typeInput, categoryInput, stockInput, skuInput, descInput].forEach(function (input) {
         input.classList.remove("is-valid", "is-invalid");
     });
 
@@ -73,7 +85,7 @@ function clearForm() {
 }
 
 function hideAlerts() {
-    [nameAlert, priceAlert, typeAlert, descAlert].forEach(function (alert) {
+    [nameAlert, priceAlert, typeAlert, categoryAlert, stockAlert, skuAlert, descAlert].forEach(function (alert) {
         alert.classList.add("d-none");
     });
 }
@@ -89,7 +101,7 @@ function renderProducts(filterText) {
 
     for (var i = 0; i < productList.length; i++) {
         var product = productList[i];
-        var fullText = `${product.name} ${product.type} ${product.desc}`.toLowerCase();
+        var fullText = `${product.name} ${product.type} ${product.category} ${product.sku} ${product.desc}`.toLowerCase();
 
         if (fullText.includes(text)) {
             matchedProducts.push({ index: i, product: product });
@@ -99,7 +111,7 @@ function renderProducts(filterText) {
     if (matchedProducts.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="text-center py-4">No products found for this search.</td>
+                <td colspan="10" class="text-center py-4">No products found for this search.</td>
             </tr>`;
         return;
     }
@@ -115,6 +127,9 @@ function renderProducts(filterText) {
                 <td>${data.product.name}</td>
                 <td>${data.product.price}</td>
                 <td>${data.product.type}</td>
+                <td>${data.product.category}</td>
+                <td>${data.product.stock}</td>
+                <td>${data.product.sku}</td>
                 <td>${data.product.desc}</td>
                 <td>
                     <button class="btn btn-warning me-2" onclick="getData(${data.index})">Edit</button>
@@ -156,6 +171,9 @@ function getData(index) {
     nameInput.value = productList[index].name;
     priceInput.value = productList[index].price;
     typeInput.value = productList[index].type;
+    categoryInput.value = productList[index].category || "";
+    stockInput.value = productList[index].stock || "";
+    skuInput.value = productList[index].sku || "";
     descInput.value = productList[index].desc;
 
     if (productList[index].image) {
@@ -175,7 +193,7 @@ function updateProduct() {
         return;
     }
 
-    if (!validateName() || !validatePrice() || !validateType() || !validateDesc()) {
+    if (!validateName() || !validatePrice() || !validateType() || !validateCategory() || !validateStock() || !validateSKU() || !validateDesc()) {
         return;
     }
 
@@ -196,6 +214,9 @@ function applyUpdate(imageData) {
     productList[editingIndex].name = nameInput.value.trim();
     productList[editingIndex].price = priceInput.value;
     productList[editingIndex].type = typeInput.value.trim();
+    productList[editingIndex].category = categoryInput.value.trim();
+    productList[editingIndex].stock = stockInput.value;
+    productList[editingIndex].sku = skuInput.value.trim();
     productList[editingIndex].desc = descInput.value.trim();
     productList[editingIndex].image = imageData;
 
@@ -272,6 +293,52 @@ function validateType() {
         typeAlert.classList.remove("d-none");
         typeInput.classList.add("is-invalid");
         typeInput.classList.remove("is-valid");
+        return false;
+    }
+}
+
+function validateCategory() {
+    var text = categoryInput.value.trim();
+    if (text.length >= 2) {
+        categoryAlert.classList.add("d-none");
+        categoryInput.classList.add("is-valid");
+        categoryInput.classList.remove("is-invalid");
+        return true;
+    } else {
+        categoryAlert.classList.remove("d-none");
+        categoryInput.classList.add("is-invalid");
+        categoryInput.classList.remove("is-valid");
+        return false;
+    }
+}
+
+function validateStock() {
+    var value = parseInt(stockInput.value, 10);
+    if (!isNaN(value) && value >= 0) {
+        stockAlert.classList.add("d-none");
+        stockInput.classList.add("is-valid");
+        stockInput.classList.remove("is-invalid");
+        return true;
+    } else {
+        stockAlert.classList.remove("d-none");
+        stockInput.classList.add("is-invalid");
+        stockInput.classList.remove("is-valid");
+        return false;
+    }
+}
+
+function validateSKU() {
+    var text = skuInput.value.trim();
+    var regex = /^[a-zA-Z0-9]{3,10}$/;
+    if (regex.test(text)) {
+        skuAlert.classList.add("d-none");
+        skuInput.classList.add("is-valid");
+        skuInput.classList.remove("is-invalid");
+        return true;
+    } else {
+        skuAlert.classList.remove("d-none");
+        skuInput.classList.add("is-invalid");
+        skuInput.classList.remove("is-valid");
         return false;
     }
 }

@@ -73,6 +73,7 @@ body {
 
 .hero-section {
   margin-bottom: 18px;
+  text-align: center;
 }
 
 .eyebrow {
@@ -109,9 +110,10 @@ body {
 }
 
 .hero-section p {
-  margin: 0;
+  margin: 0 auto;
   color: var(--text-muted);
   max-width: 700px;
+  text-align: center;
 }
 
 label {
@@ -203,39 +205,66 @@ textarea:focus {
 .table {
   color: var(--text-main);
   border-collapse: separate;
-  border-spacing: 0 8px;
+  border-spacing: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.table thead {
+  background: rgba(31, 41, 55, 0.95);
 }
 
 .table thead th {
   border: none;
-  color: var(--text-muted);
+  color: var(--accent-cyan);
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  padding: 16px 14px;
 }
 
 .table tbody tr {
-  background: rgba(255, 255, 255, 0.055);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .table tbody td,
 .table tbody th {
   border: none;
-  padding: 14px 12px;
+  padding: 16px 14px;
+  color: var(--text-main);
+}
+
+.table tbody tr:hover {
+  background: rgba(0, 229, 255, 0.08);
 }
 
 .table tbody tr.table-active {
-  background: rgba(0, 229, 255, 0.16);
-  box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.2);
+  background: rgba(0, 229, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.18);
 }
 
 .table img {
   width: 60px;
   height: 60px;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.table-responsive {
+  overflow-x: auto;
+  min-height: 220px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.table tbody td.text-center {
+  color: var(--text-muted);
 }
 
 .alert {
@@ -256,6 +285,148 @@ textarea:focus {
 
   .glass-layer {
     padding: 22px 18px;
+  }
+
+  .search-panel {
+    justify-content: flex-start;
+  }
+}
+
+.form-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 24px;
+  margin-top: 18px;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.22);
+}
+
+.form-panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.form-panel-header h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  color: #f8f9ff;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field-full {
+  grid-column: 1 / -1;
+}
+
+.form-buttons {
+  margin-top: 18px;
+  grid-column: 1 / -1;
+}
+
+.search-panel {
+  margin-bottom: 10px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  min-height: 220px;
+}
+
+.table thead th {
+  white-space: nowrap;
+}
+
+.table tbody td {
+  white-space: nowrap;
+}
+
+input[type="file"],
+input[type="number"],
+textarea {
+  color: var(--text-main);
+}
+
+input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--text-main);
+}
+
+input[type="file"]::-webkit-file-upload-button,
+input[type="file"]::file-selector-button {
+  background: linear-gradient(135deg, var(--accent-pink), var(--accent-cyan));
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 10px 18px;
+  margin-right: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover,
+input[type="file"]::file-selector-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.table-responsive {
+  overflow-x: auto;
+  min-height: 220px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.8);
+  padding: 12px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.table {
+  color: var(--text-main);
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(7, 10, 25, 0.92);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.table thead {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.table tbody tr {
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 992px) {
+  .ultimate-card {
+    padding: 18px;
+  }
+
+  .glass-layer {
+    padding: 22px 18px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-buttons {
+    grid-column: 1 / -1;
   }
 
   .search-panel {

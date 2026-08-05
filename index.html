@@ -17,70 +17,20 @@
   <div class="page-shell">
     <section class="ultimate-card">
       <div class="glass-layer">
-        <div class="hero-section">
+        <div class="hero-section text-center">
           <span class="eyebrow">Smart CRUD Dashboard</span>
           <h1>Product Control Center</h1>
           <p>Organize your items with instant validation, image previews, and a sleek futuristic layout.</p>
         </div>
 
         <div class="row g-4">
-          <div class="col-lg-4">
-            <div id="nameContainer" class="my-3">
-              <label for="nameInput">Product name</label>
-              <input oninput="validateName()" type="text" id="nameInput" placeholder="Product name" class="form-control" />
-              <div id="nameAlert" class="alert alert-danger mt-2 d-none" role="alert">
-                First letter must be uppercase and length should be 3 to 8 characters.
-              </div>
-            </div>
-
-            <div id="priceContainer" class="my-3">
-              <label for="priceInput">Product price</label>
-              <input oninput="validatePrice()" type="number" id="priceInput" placeholder="Product price" class="form-control" />
-              <div id="priceAlert" class="alert alert-danger mt-2 d-none" role="alert">
-                Price must be a number greater than zero.
-              </div>
-            </div>
-
-            <div id="typeContainer" class="my-3">
-              <label for="typeInput">Product type</label>
-              <input oninput="validateType()" type="text" id="typeInput" placeholder="Product type" class="form-control" />
-              <div id="typeAlert" class="alert alert-danger mt-2 d-none" role="alert">
-                Product type is required and must be at least 2 characters.
-              </div>
-            </div>
-
-            <div id="imageContainer" class="my-3">
-              <label for="imageInput">Product image</label>
-              <input type="file" id="imageInput" class="form-control" accept="image/*" />
-              <img id="previewImg" src="" class="d-none mt-2 rounded" alt="preview" />
-            </div>
-
-            <div id="descContainer" class="my-3">
-              <label for="descInput">Product description</label>
-              <textarea oninput="validateDesc()" id="descInput" placeholder="Product description" class="form-control"></textarea>
-              <div id="descAlert" class="alert alert-danger mt-2 d-none" role="alert">
-                Description is required and must be at least 5 characters.
-              </div>
-            </div>
-
-            <div id="buttonsContainer" class="d-grid gap-2">
-              <button onclick="addProduct()" id="addBtn" class="btn btn-primary rounded-pill">
-                Add product
-              </button>
-              <button onclick="updateProduct()" id="updateBtn" class="btn btn-success rounded-pill d-none">
-                Update product
-              </button>
-              <button onclick="cancelEdit()" id="cancelBtn" class="btn btn-outline-light rounded-pill d-none">
-                Cancel edit
-              </button>
-            </div>
-          </div>
-
-          <div class="col-lg-8">
+          <div class="col-12">
             <div class="search-panel">
               <input oninput="searchProduct()" type="text" id="searchInput" placeholder="Search product" class="form-control" />
             </div>
+          </div>
 
+          <div class="col-12">
             <div class="table-responsive mt-3">
               <table class="table table-hover align-middle">
                 <thead>
@@ -90,12 +40,100 @@
                     <th scope="col">Name</th>
                     <th scope="col">Price</th>
                     <th scope="col">Type</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Stock</th>
+                    <th scope="col">SKU</th>
                     <th scope="col">Description</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="tbody"></tbody>
               </table>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="form-panel">
+              <div class="form-panel-header">
+                <span class="eyebrow">Product details</span>
+                <h2>New product entry</h2>
+              </div>
+
+              <div class="form-grid">
+                <div id="nameContainer" class="form-field">
+                  <label for="nameInput">Product name</label>
+                  <input oninput="validateName()" type="text" id="nameInput" placeholder="Product name" class="form-control" />
+                  <div id="nameAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                    First letter must be uppercase and length should be 3 to 8 characters.
+                  </div>
+                </div>
+
+                <div id="priceContainer" class="form-field">
+                  <label for="priceInput">Product price</label>
+                  <input oninput="validatePrice()" type="number" id="priceInput" placeholder="Product price" class="form-control" />
+                  <div id="priceAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                    Price must be a number greater than zero.
+                  </div>
+                </div>
+
+                <div id="typeContainer" class="form-field">
+                  <label for="typeInput">Product type</label>
+                  <input oninput="validateType()" type="text" id="typeInput" placeholder="Product type" class="form-control" />
+                  <div id="typeAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                    Product type is required and must be at least 2 characters.
+                  </div>
+                </div>
+
+                <div id="categoryContainer" class="form-field">
+                  <label for="categoryInput">Product category</label>
+                  <input oninput="validateCategory()" type="text" id="categoryInput" placeholder="Product category" class="form-control" />
+                  <div id="categoryAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                    Category is required and must be at least 2 characters.
+                  </div>
+                </div>
+
+                <div id="stockContainer" class="form-field">
+                  <label for="stockInput">Stock quantity</label>
+                  <input oninput="validateStock()" type="number" id="stockInput" min="0" placeholder="Stock quantity" class="form-control" />
+                  <div id="stockAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                    Stock must be zero or more.
+                  </div>
+                </div>
+
+                <div id="skuContainer" class="form-field">
+                  <label for="skuInput">Product SKU</label>
+                  <input oninput="validateSKU()" type="text" id="skuInput" placeholder="Product SKU" class="form-control" />
+                  <div id="skuAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                    SKU must be 3 to 10 alphanumeric characters.
+                  </div>
+                </div>
+
+                <div id="imageContainer" class="form-field form-field-full">
+                  <label for="imageInput">Product image</label>
+                  <input type="file" id="imageInput" class="form-control" accept="image/*" />
+                  <img id="previewImg" src="" class="d-none mt-2 rounded" alt="preview" />
+                </div>
+
+                <div id="descContainer" class="form-field form-field-full">
+                  <label for="descInput">Product description</label>
+                  <textarea oninput="validateDesc()" id="descInput" placeholder="Product description" class="form-control"></textarea>
+                  <div id="descAlert" class="alert alert-danger mt-2 d-none" role="alert">
+                    Description is required and must be at least 5 characters.
+                  </div>
+                </div>
+              </div>
+
+              <div id="buttonsContainer" class="d-grid gap-2 form-buttons">
+                <button onclick="addProduct()" id="addBtn" class="btn btn-primary rounded-pill">
+                  Add product
+                </button>
+                <button onclick="updateProduct()" id="updateBtn" class="btn btn-success rounded-pill d-none">
+                  Update product
+                </button>
+                <button onclick="cancelEdit()" id="cancelBtn" class="btn btn-outline-light rounded-pill d-none">
+                  Cancel edit
+                </button>
+              </div>
             </div>
           </div>
         </div>
